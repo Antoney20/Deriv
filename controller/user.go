@@ -96,3 +96,14 @@ func UpdateProfile(c *gin.Context) {
 }
 
 
+func GetAllUsers(c *gin.Context) {
+	var users []model.User
+
+	// Fetch all users with profiles
+	if err := config.DB.Find(&users).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve users"})
+		return
+	}
+
+	c.JSON(http.StatusOK, users)
+}
