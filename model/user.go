@@ -14,7 +14,7 @@ type User struct {
     Password    string `gorm:"not null"`
 }
 
-// Validate checks for user registration errors
+// validation--- registration
 func (u *User) Validate(db *gorm.DB) error {
     if u.Username == "" || u.PhoneNumber == "" || u.Password == "" {
         return errors.New("all fields are required")
@@ -36,7 +36,7 @@ func (u *User) Validate(db *gorm.DB) error {
     return nil
 }
 
-// validatePassword checks the password strength
+// pass validation
 func validatePassword(password string) error {
     if len(password) < 5 {
         return errors.New("password must be at least 5 characters long")
@@ -57,7 +57,7 @@ func validatePassword(password string) error {
     return nil
 }
 
-// isNumeric checks if a string is entirely numeric
+
 func isNumeric(s string) bool {
     for _, c := range s {
         if c < '0' || c > '9' {
@@ -67,7 +67,7 @@ func isNumeric(s string) bool {
     return true
 }
 
-// isCommonPassword checks if a password is too common (simple example)
+// fot common passwords
 func isCommonPassword(password string) bool {
     commonPasswords := []string{"123456", "password", "123456789", "qwerty", "abc123"}
     for _, common := range commonPasswords {
@@ -78,7 +78,7 @@ func isCommonPassword(password string) bool {
     return false
 }
 
-// containsAlphanumeric checks if a password contains letters and numbers
+//  alphanumeric-- strong psswd
 func containsAlphanumeric(s string) bool {
     hasLetter := false
     hasNumber := false
@@ -94,11 +94,18 @@ func containsAlphanumeric(s string) bool {
     return hasLetter && hasNumber
 }
 
-// HashPassword hashes the user's password
+//  finally hash passwd
 func (u *User) HashPassword() {
     hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
     if err != nil {
-        panic(err) // Consider handling this more gracefully
+        panic(err) 
     }
     u.Password = string(hashedPassword)
+}
+
+
+//  login -- check passwd
+func (u *User) CheckPassword(password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+	return err == nil
 }

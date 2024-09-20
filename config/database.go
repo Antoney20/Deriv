@@ -11,7 +11,7 @@ import (
 
 var DB *gorm.DB
 
-// ConnectDatabase initializes the database connection
+// Init db connection
 func ConnectDatabase() error {
 	user := getEnv("DB_USER", "postgres")
 	password := getEnv("DB_PASSWORD", "admin")

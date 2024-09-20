@@ -5,7 +5,7 @@ import (
 
 	"example.com/myapi/config"
 	"example.com/myapi/controller"
-	"example.com/myapi/model" // Assuming your User model is here
+	"example.com/myapi/model" 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -32,6 +32,7 @@ func main() {
 	router := gin.Default()
 
 	router.POST("/register", controller.RegisterUser)
+	router.POST("/login", controller.LoginUser)
 
 	// Start the server
 	if err := router.Run(":8080"); err != nil {
