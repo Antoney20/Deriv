@@ -12,6 +12,21 @@ type User struct {
     Username    string `gorm:"unique;not null"`
     PhoneNumber string `gorm:"unique;not null"`
     Password    string `gorm:"not null"`
+	Profile     Profile `gorm:"foreignKey:UserID"`
+}
+
+type Profile struct {
+	gorm.Model
+	UserID         uint   `gorm:"not null"`
+	Email          string `gorm:"unique;not null"`
+	FirstName      string
+	LastName       string
+	IsEmailVerified bool
+	IsActive       bool 
+	UserRole       string `gorm:"default:'user'"`
+	Image          string `gorm:"size:255"` 
+	Bio            string `gorm:"type:text"`
+
 }
 
 // validation--- registration
