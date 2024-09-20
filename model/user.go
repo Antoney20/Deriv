@@ -1,10 +1,12 @@
 package model
 
 import (
-    "errors"
-    "gorm.io/gorm"
-    "golang.org/x/crypto/bcrypt"
-    "regexp"
+	"errors"
+	"regexp"
+	"strings"
+
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -107,6 +109,24 @@ func containsAlphanumeric(s string) bool {
         }
     }
     return hasLetter && hasNumber
+}
+
+func ValidatePhoneNumber(phoneNumber string) error {
+	// Remove any 'i' characters
+	normalized := strings.ReplaceAll(phoneNumber, "i", "")
+
+	// Check if the phone number contains only digits
+	re := regexp.MustCompile(`^[0-9]+$`)
+	if !re.MatchString(normalized) {
+		return errors.New("phone number must be entirely numeric")
+	}
+
+	// Check length (9-12 digits)
+	if len(normalized) < 9 || len(normalized) > 12 {
+		return errors.New("phone number must be between 9 and 12 digits long")
+	}
+
+	return nil
 }
 
 //  finally hash passwd

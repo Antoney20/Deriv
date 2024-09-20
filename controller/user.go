@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
 	"example.com/myapi/config"
 	"example.com/myapi/model"
@@ -18,6 +19,19 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
+	// Validate phone number
+	if err := model.ValidatePhoneNumber(user.PhoneNumber); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Check for existing user by phone number
+	var existingUser model.User
+	if err := config.DB.Where("phone_number = ?", user.PhoneNumber).First(&existingUser).Error; err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Phone number is already registered"})
+		return
+	}
+	
 	// Validate the user model
 	if err := user.Validate(config.DB); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -106,4 +120,24 @@ func GetAllUsers(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, users)
+}
+
+// retrieves user by ID 
+func FetchUserByID(c *gin.Context) {
+	id := c.Param("id") //get user id
+
+
+	userID, err := strconv.ParseUint(id, 10, 32) 
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	var user model.User
+	if err := config.DB.First(&user, userID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
 }

@@ -35,7 +35,7 @@ func main() {
 	router.POST("/login", controller.LoginUser)
 	router.PUT("/profile/:userID", controller.UpdateProfile)
 	router.GET("/users", controller.GetAllUsers) 
-
+	router.GET("/users/:id", controller.FetchUserByID)
 	// Start the server
 	if err := router.Run(":8080"); err != nil {
 		log.Fatalf("Failed to run server: %v", err)
