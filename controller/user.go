@@ -14,7 +14,7 @@ func RegisterUser(c *gin.Context) {
 
 	// Bind JSON for user
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input data"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input data now"})
 		return
 	}
 
