@@ -6,8 +6,10 @@ import (
 	"example.com/myapi/config"
 	"example.com/myapi/controller"
 	"example.com/myapi/model" 
+	"example.com/myapi/middleware" 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	
 )
 
 // load env
@@ -30,6 +32,8 @@ func main() {
 	log.Println("Migrations successful")
 
 	router := gin.Default()
+    router.Use(middleware.LoggerMiddleware())
+	
 
 	router.POST("/register", controller.RegisterUser)
 	router.POST("/login", controller.LoginUser)
