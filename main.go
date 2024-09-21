@@ -26,7 +26,7 @@ func main() {
 	}
 
 	// Auto migrate models
-	if err := config.DB.AutoMigrate(&model.User{}); err != nil {
+	if err := config.DB.AutoMigrate(&model.User{},  &model.Profile{}); err != nil {
 		log.Fatalf("Failed to auto-migrate models: %v", err)
 	}
 	log.Println("Migrations successful")
@@ -37,7 +37,8 @@ func main() {
 
 	router.POST("/register", controller.RegisterUser)
 	router.POST("/login", controller.LoginUser)
-	router.PUT("/profile/:userID", controller.UpdateProfile)
+	router.POST("/profile/:id", controller.CreateProfile)
+	router.PUT("/profile/:id", controller.UpdateProfile)
 	router.GET("/users", controller.GetAllUsers) 
 	router.GET("/users/:id", controller.FetchUserByID)
 	router.DELETE("/users/:userID", controller.DeleteUser)

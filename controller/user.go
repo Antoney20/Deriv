@@ -80,6 +80,44 @@ func LoginUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Welcome! "})
 }
 
+func CreateProfile(c *gin.Context) {
+	var profile model.Profile
+
+	// Bind JSON for profile
+	if err := c.ShouldBindJSON(&profile); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input data"})
+		return
+	}
+
+	// Validate UserID
+	var user model.User
+	if err := config.DB.First(&user, profile.UserID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	var existingProfile model.Profile
+	if err := config.DB.First(&existingProfile, "user_id = ?", profile.UserID).Error; err == nil {
+		// Profile exists; ask if the user wants to update
+		c.JSON(http.StatusConflict, gin.H{
+			"message": "Profile already exists. Do you want to update it?",
+			"existingProfile": existingProfile,
+		})
+		return
+	}
+
+
+	// Ensure UserID is set correctly
+	profile.UserID = user.ID
+
+	// Save the profile to the database
+	if err := config.DB.Create(&profile).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create profile"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "Profile created successfully!"})
+}
 
 // UpdateProfile handles updating user profiles
 func UpdateProfile(c *gin.Context) {
