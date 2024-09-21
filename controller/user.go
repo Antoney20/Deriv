@@ -141,3 +141,22 @@ func FetchUserByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, user)
 }
+// DeleteUser handles deleting a user by ID
+func DeleteUser(c *gin.Context) {
+	userID := c.Param("userID")
+
+	// Find the user by ID
+	var user model.User
+	if err := config.DB.Preload("Profile").First(&user, userID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	// Delete the user and associated profile
+	if err := config.DB.Select("Profile").Delete(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not delete user"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "User deleted successfully!"})
+}
