@@ -12,7 +12,6 @@ import (
 	
 )
 
-// load env
 func init() {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")
@@ -20,12 +19,10 @@ func init() {
 }
 
 func main() {
-	// Connect to the database
 	if err := config.ConnectDatabase(); err != nil {
 		log.Fatalf("Could not connect to the database: %v", err)
 	}
 
-	// Auto migrate models
 	if err := config.DB.AutoMigrate(&model.User{},  &model.Profile{}); err != nil {
 		log.Fatalf("Failed to auto-migrate models: %v", err)
 	}

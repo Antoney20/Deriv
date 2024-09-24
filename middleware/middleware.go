@@ -20,22 +20,18 @@ func LoggerMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
 
-		// Process the request
 		c.Next()
 
-		// Log details after the request has been processed
 		duration := time.Since(start)
 		statusCode := c.Writer.Status()
 		method := c.Request.Method
 		path := c.Request.URL.Path
 
-		// Get device info
 		userAgent := c.Request.UserAgent()
 		ipAddress := c.ClientIP()
 
 		deviceType := getDeviceType(userAgent)
 
-		// Determine color 
 		var color string
 		if statusCode >= 200 && statusCode < 300 {
 			color = White 
@@ -45,7 +41,6 @@ func LoggerMiddleware() gin.HandlerFunc {
 			color = Red 
 		}
 
-		// Log to console with color
 		logMessage := formatLogMessage(method, path, statusCode, duration, deviceType, ipAddress)
 		log.Print(color + logMessage + Reset)
 
@@ -54,7 +49,6 @@ func LoggerMiddleware() gin.HandlerFunc {
 	}
 }
 
-// getDeviceType determines the device type based on the User-Agent string
 func getDeviceType(userAgent string) string {
 	if strings.Contains(userAgent, "Android") {
 		return "Android"

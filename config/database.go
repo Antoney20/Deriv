@@ -19,11 +19,8 @@ func ConnectDatabase() error {
 	host := getEnv("DB_HOST", "localhost")
 	port := getEnv("DB_PORT", "5432")
 
-	// Construct the Data Source Name (DSN)
 	dsn := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=disable",
 		user, password, dbName, host, port)
-
-	// Connect to the database using gorm
 	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -41,7 +38,6 @@ func ConnectDatabase() error {
 	return nil
 }
 
-// getEnv reads an environment variable or returns a default value if not set
 func getEnv(key, defaultValue string) string {
 	if value, exists := os.LookupEnv(key); exists {
 		return value
